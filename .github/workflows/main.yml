@@ -1,23 +1,24 @@
 name: Portfolio
 
 on:
- push:
-  branches:
-   -main
-   
+  push:
+    branches:
+      - main
+
 jobs:
- build-and-deploy:
-  runs-on: ubuntu-latest
-  steps:
-  - name: Checkout
-   uses: action/Checkout@v1
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-  - name: Configure AWS Credentials
-   users: aws-actions/configuration-aws-credentials@v1
-   with:
-     aws-access-key-id: ${{secret.AWS_ACCESS_KEY}}
-     aws-secret-access-key: ${{secret.AWS__SECRET_ACCESS_KEY}}
-     aws-region: us-east-1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  - name: Deploye static site to s3
-    run: aws s3 sync .s3://portfoliio0 --delete
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy static site to S3
+        run: aws s3 sync . s3://portfoliio0 --delete
